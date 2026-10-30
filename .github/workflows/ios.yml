@@ -1,44 +1,12 @@
-name: Build APK e IPA
+name: iOS IPA (sin firma)
 
-# Ejecución manual: Actions > "Build APK e IPA" > Run workflow
+# Ejecución manual: Actions > "iOS IPA (sin firma)" > Run workflow
+# El APK de Android se genera a mano con Android Studio (ver README).
 on:
   workflow_dispatch:
 
 jobs:
-  apk:
-    name: APK (Android)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Instalar dependencias
-        run: npm ci
-
-      - name: Compilar la app web
-        run: npx ng build
-
-      - name: Compilar el APK (debug)
-        run: |
-          npx cordova platform add android
-          npx cordova build android
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: App-apk
-          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
-
-  ipa:
-    name: IPA (iOS, sin firma)
+  build-ipa:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
