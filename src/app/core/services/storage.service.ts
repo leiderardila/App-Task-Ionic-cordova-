@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Preferences } from '@capacitor/preferences';
 
+/**
+ * Almacenamiento local sobre localStorage (disponible en el WebView de Cordova).
+ * Mantiene la API asíncrona anterior para no cambiar a los servicios que la usan.
+ */
 @Injectable({ providedIn: 'root' })
 export class StorageService {
 
-  async save(key: string, value: unknown) {
-    await Preferences.set({
-      key,
-      value: JSON.stringify(value)
-    });
+  async save(key: string, value: unknown): Promise<void> {
+    localStorage.setItem(key, JSON.stringify(value));
   }
 
   async get(key: string) {
-    const data = await Preferences.get({ key });
+    const data = localStorage.getItem(key);
 
-    return data.value
-      ? JSON.parse(data.value)
+    return data
+      ? JSON.parse(data)
       : null;
   }
 }

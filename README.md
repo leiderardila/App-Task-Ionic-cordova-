@@ -1,10 +1,10 @@
 # App Task — Ionic + Angular
 
-Lista de tareas con categorías, Firebase Remote Config (feature flag) y soporte para Android e iOS con Capacitor.
+Lista de tareas con categorías, Firebase Remote Config (feature flag) y soporte para Android e iOS con **Cordova**.
 
 ## Funcionalidades
 
-- Tareas: agregar, completar, eliminar. Persisten en almacenamiento local (`@capacitor/preferences`).
+- Tareas: agregar, completar, eliminar. Persisten en almacenamiento local (`localStorage` del WebView).
 - Categorías: crear, editar, eliminar, asignar a una tarea y filtrar.
 - Feature flag `categories` (Firebase Remote Config): si está en `false` se oculta todo lo relacionado con categorías.
 
@@ -25,8 +25,9 @@ src/environments/    configuración de Firebase por entorno
 
 - Node.js >= 22.22.3 (requerido por Angular CLI 22)
 - Ionic CLI: `npm i -g @ionic/cli`
-- Android: Android Studio + SDK
-- iOS: macOS con Xcode y CocoaPods
+- Cordova se instala con el proyecto (`npm install`); se invoca con `npx cordova`
+- Android: Android Studio + SDK y JDK 17
+- iOS: macOS con Xcode
 
 ## Ejecutar en el navegador
 
@@ -44,21 +45,22 @@ ionic serve
 
 Si Firebase no responde o no está configurado, la app usa el valor por defecto (`true`) y no se bloquea.
 
-## Compilar para Android e iOS (Capacitor)
+## Compilar para Android e iOS (Cordova)
 
-> **Capacitor en lugar de Cordova:** la prueba menciona Cordova, pero se usó Capacitor, su sucesor oficial en Ionic. Cumple el mismo objetivo (empaquetar la app web como app nativa para Android e iOS), tiene mantenimiento activo y ya lo usan los plugins del proyecto (`@capacitor/preferences`). Los proyectos nativos quedan en `android/` e `ios/` y se abren con Android Studio y Xcode.
+La configuración de la app está en [`config.xml`](config.xml). Los proyectos nativos se generan en `platforms/` (no se versionan).
 
 ```bash
-ionic build
-npx cap add android      # solo la primera vez
-npx cap add ios          # solo la primera vez, requiere macOS
-npx cap sync
-npx cap open android     # abre Android Studio
-npx cap open ios         # abre Xcode
+ng build                          # genera www/
+npx cordova platform add android  # solo la primera vez
+npx cordova platform add ios      # solo la primera vez, requiere macOS
+npx cordova build android         # genera el APK
+npx cordova build ios             # requiere macOS y Xcode
 ```
 
-- **APK:** en Android Studio, *Build > Build Bundle(s) / APK(s) > Build APK(s)*.
-- **IPA:** en Xcode, *Product > Archive*, y luego *Distribute App* (requiere cuenta de Apple Developer y firma).
+- **APK (debug):** `platforms/android/app/build/outputs/apk/debug/app-debug.apk`.
+- **Variables de entorno (Android):** `JAVA_HOME` apuntando a un JDK 17 (la carpeta del JDK, no su `bin`), `ANDROID_HOME` con la ruta del SDK y `gradle` disponible en el `PATH` (o Android Studio instalado).
+- **Ejecutar en un dispositivo o emulador:** `npx cordova run android`.
+- **IPA:** en Xcode, abrir el proyecto de `platforms/ios`, *Product > Archive* y *Distribute App* (requiere cuenta de Apple Developer y firma).
 - Sin Mac, el IPA puede generarse con un servicio en la nube (Codemagic, MacStadium, etc.).
 
 ### IPA sin firma con GitHub Actions
@@ -83,10 +85,10 @@ El flujo [`.github/workflows/ios.yml`](.github/workflows/ios.yml) genera el IPA 
 ### ¿Cuáles fueron los principales desafíos al implementar las nuevas funcionalidades?
 
 - **Compatibilidad de versiones:** `@angular/fire` 21 solo admite Angular 21 y TypeScript menor que 6, mientras que la plantilla de Ionic trae Angular 22. Se resolvió usando el SDK `firebase` directamente, que no depende de la versión de Angular.
-- **Almacenamiento asíncrono:** `@capacitor/preferences` es asíncrono, por lo que los servicios arrancan con una lista vacía y cargan los datos en segundo plano. Además, `Date` se serializa como texto en JSON y se restaura al leer.
+- **Almacenamiento local:** `StorageService` expone una API asíncrona sobre `localStorage`, y los servicios cargan los datos al iniciar. Además, `Date` se serializa como texto en JSON y se restaura al leer.
 - **Feature flag sin bloquear el inicio:** Remote Config requiere red. Se carga al arrancar con un tope de 3 s y con valores por defecto, para que la app funcione aunque Firebase falle.
 - **Integridad de datos:** al eliminar una categoría, sus tareas quedaban apuntando a un id inexistente. Ahora quedan sin categoría.
-- **Herramientas de compilación:** Angular CLI 22 exige Node 22.22.3 o superior, y Capacitor 8 exige JDK 21 para compilar Android.
+- **Herramientas de compilación:** Angular CLI 22 exige Node 22.22.3 o superior, y Cordova exige tener `JAVA_HOME`, `ANDROID_HOME` y `gradle` bien configurados para compilar Android.
 
 ### ¿Qué técnicas de optimización de rendimiento aplicaste y por qué?
 

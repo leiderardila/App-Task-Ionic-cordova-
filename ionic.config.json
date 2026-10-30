@@ -1,7 +1,7 @@
 {
   "name": "App-Task-Ionic",
   "integrations": {
-    "capacitor": {}
+    "cordova": {}
   },
   "type": "angular-standalone"
 }

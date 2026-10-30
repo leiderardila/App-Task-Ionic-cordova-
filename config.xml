@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="io.ionic.AppTask" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>App Task</name>
+    <description>Lista de tareas con categorías y Firebase Remote Config</description>
+    <author email="dev@example.com" href="https://github.com/leiderardila">App Task</author>
+    <content src="index.html" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <preference name="Orientation" value="default" />
+    <platform name="android">
+        <preference name="Scheme" value="https" />
+        <preference name="android-minSdkVersion" value="24" />
+    </platform>
+    <platform name="ios">
+        <preference name="scheme" value="app" />
+        <preference name="hostname" value="localhost" />
+    </platform>
+</widget>

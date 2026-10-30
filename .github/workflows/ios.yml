@@ -21,14 +21,18 @@ jobs:
       - name: Compilar la app web
         run: npx ng build
 
-      - name: Sincronizar Capacitor (iOS)
-        run: npx cap sync ios
+      - name: Agregar y preparar la plataforma iOS (Cordova)
+        run: |
+          npx cordova platform add ios
+          npx cordova prepare ios
 
       - name: Archivar sin firma
         run: |
+          PROJECT=$(ls -d platforms/ios/*.xcodeproj | head -n 1)
+          SCHEME=$(basename "$PROJECT" .xcodeproj)
           xcodebuild archive \
-            -project ios/App/App.xcodeproj \
-            -scheme App \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
             -configuration Release \
             -sdk iphoneos \
             -archivePath "$RUNNER_TEMP/App.xcarchive" \

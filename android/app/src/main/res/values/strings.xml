@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">App Task</string>
-    <string name="title_activity_main">App Task</string>
-    <string name="package_name">io.ionic.AppTask</string>
-    <string name="custom_url_scheme">io.ionic.AppTask</string>
-</resources>
