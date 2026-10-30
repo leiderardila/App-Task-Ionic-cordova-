@@ -63,12 +63,16 @@ npx cordova build ios             # requiere macOS y Xcode
 - **IPA:** en Xcode, abrir el proyecto de `platforms/ios`, *Product > Archive* y *Distribute App* (requiere cuenta de Apple Developer y firma).
 - Sin Mac, el IPA puede generarse con un servicio en la nube (Codemagic, MacStadium, etc.).
 
-### IPA sin firma con GitHub Actions
+### APK e IPA con GitHub Actions
 
-El flujo [`.github/workflows/ios.yml`](.github/workflows/ios.yml) genera el IPA en un Mac de GitHub, sin necesidad de un Mac propio ni de una cuenta de Apple Developer:
+El flujo [`.github/workflows/build.yml`](.github/workflows/build.yml) genera el APK y el IPA en servidores de GitHub, sin necesidad de un Mac propio ni de una cuenta de Apple Developer:
 
-1. En GitHub: **Actions > iOS IPA (sin firma) > Run workflow**.
-2. Al terminar, descargar el artefacto **App-unsigned-ipa** (contiene `App-unsigned.ipa`).
+1. En GitHub: **Actions > Build APK e IPA > Run workflow**.
+2. Al terminar, descargar los artefactos de la ejecución:
+   - **App-apk**: contiene `app-debug.apk`.
+   - **App-unsigned-ipa**: contiene `App-unsigned.ipa`.
+
+Los dos trabajos (`apk` en Linux e `ipa` en macOS) corren en paralelo.
 
 > **Importante:** el IPA es **sin firma**, por lo que no se instala directamente en un iPhone. Para instalarlo hay que firmarlo con un certificado y un provisioning profile de Apple Developer, o compilar desde Xcode con una cuenta de Apple.
 
